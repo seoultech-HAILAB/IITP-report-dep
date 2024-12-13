@@ -47,8 +47,14 @@ python run_evaluation.py \
 ```
 
 ## Evaluation Results
-- [BLEU](https://huggingface.co/spaces/evaluate-metric/bleu/blob/main/README.md)
-- [ROUGE](https://huggingface.co/spaces/evaluate-metric/rouge/blob/main/README.md)
+- [BLEU](https://huggingface.co/spaces/evaluate-metric/bleu/blob/main/README.md) (higher score is better)
+- [CER](https://huggingface.co/spaces/evaluate-metric/cer) (lower score is better)
+- [ROUGE](https://huggingface.co/spaces/evaluate-metric/rouge/blob/main/README.md) (higher score is better)
+
+> ※ 참고
+> - BLEU의 n값은 1로 설정
+> - CER은 SER의 대체 지표
+> - ROUGE 스코어는 ROUGE-L 기준
 
 | 구분 | 평가항목 | 성능지표 | 목표치 | 결과 |
 | --- | --- | --- | --- | --- |
@@ -62,7 +68,6 @@ python run_evaluation.py \
 |  | 토론프로젝트 AI 맞춤형 콘텐츠 생성 오류율 | SER | $\leq0.01$ |  |
 |  | 토론프로젝트 AI 맞춤형 콘텐츠 생성 재현성 | ROUGE | $\geq0.5$ |  |
 |  | AI 맞춤형 콘텐츠 생성 코파일럿 작업부하 | NASA-TLX | $\leq50$ |  |
-> ※ BLEU-1, ROUGE-L 기준
 
 ## Code Structure
 ```bash
