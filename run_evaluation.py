@@ -11,7 +11,7 @@ from lib.utils import get_eval_summary
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--domain_type", type=str, help="", default="DT", choices=['DT', 'DP'])
-    parser.add_argument("--task_type", type=str, help="", default="QG", choices=['QG'])
+    parser.add_argument("--task_type", type=str, help="", default="QG", choices=['QG', 'SUM'])
     
     parser.add_argument("--datasource", type=str, help="", default="huggingface")
     parser.add_argument("--dataset_name", type=str, help="", default="lmqg/qg_squad")
