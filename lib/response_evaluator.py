@@ -25,6 +25,7 @@ class ReferenceBasedResponseEvaluator(AbstractResponseEvaluator):
         self.bleu_n = 1
         self.bleu_scorer = load("bleu")
         self.rouge_scorer = load("rouge")
+        self.cer_scorer = load("cer")
         
     def evaluate_response(self, **kwargs):
         input_payloads = kwargs['input_payloads']
@@ -59,13 +60,15 @@ class ReferenceBasedResponseEvaluator(AbstractResponseEvaluator):
             generated_response = output["generated_response"]
             
             bleu_score = self.bleu_scorer.compute(predictions=[generated_response], references=[[ground_truth]], max_order=self.bleu_n)
+            cer_score = self.cer_scorer.compute(predictions=[generated_response], references=[ground_truth])
             rouge_scores = self.rouge_scorer.compute(predictions=[generated_response], references=[ground_truth])
 
             result = {
                 "generated_response": generated_response,
                 "ground_truth": ground_truth,
                 "bleu_4_score": bleu_score['bleu'],
-                "rouge_l_score": rouge_scores['rougeL']
+                "cer_score": cer_score,
+                "rouge_l_score": rouge_scores['rougeL'],
             }
             self.save_results(result, kwargs['results_path'])
             
