@@ -95,6 +95,7 @@ def main(args):
     print(f"[[Evaluation Summary]]")
     print(f"- Num of responses: {eval_summary['num_responses']}")
     print(f"- Avg BLEU: {eval_summary['avg_bleu']:.4f}")
+    print(f"- Avg CER: {eval_summary['avg_cer']:.4f}")
     print(f"- Avg ROUGE: {eval_summary['avg_rouge']:.4f}")
 
 

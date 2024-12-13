@@ -1,1 +1,1 @@
-{"num_responses": 11877, "avg_bleu": 0.3039, "avg_rouge": 0.3414}
+{"num_responses": 11877, "avg_bleu": 0.3968, "avg_cer": 0.9747, "avg_rouge": 0.4064}

@@ -110,6 +110,76 @@ class QuestionGenerationPayloadCreator(AbstractPayloadCreator):
         else:
             print(f"No cached payloads found.")
             return []
+        
+
+class SummarizationPayloadCreator(AbstractPayloadCreator):
+    def __init__(self, temperature, system_prompt_path):
+        super().__init__(temperature, 0, system_prompt_path)
+
+    def create_payload(self, **kwargs):
+        input_dataset = kwargs['input_dataset']
+        self.num_examples = len(input_dataset)
+        
+        print(f"[[Creating payloads]]")
+               
+        # Step 1: Check to cached payloads
+        api_request_list = []
+        if kwargs['reset'] is True:         # TODO: Fix this
+            pass
+        else:
+            api_request_list = self.load_cached_payload(kwargs['payload_path'])
+            self.num_payloads = len(api_request_list)
+            
+            print(f"- Num of examples: {self.num_examples}")
+            print(f"- Num of payloads: {self.num_payloads}")
+            
+            if self.num_payloads == self.num_examples:
+                print(f"Successfully loaded the cached payloads!")
+                return api_request_list
+            elif self.num_payloads > 0:
+                print(f"Continuing from {self.num_payloads} cached payloads...")
+            
+        # Step 2: Create the payloads
+        for input_data in tqdm(
+            input_dataset.select(range(self.num_payloads, self.num_examples)),
+            desc="Creating payloads",
+        ):
+            messages = [
+                {"role": "system", "content": self.system_prompt},
+                {
+                    "role": "user", 
+                    "content": input_data['article']
+                },
+            ]
+            payload = {
+                "messages": messages,
+                "temperature": self.temperature,
+                "ground_truth": input_data["summary"],
+            }
+            self.save_payload(payload, kwargs['payload_path'])
+
+            api_request_list.append(payload)
+            
+        return api_request_list
+    
+    def save_payload(self, payload, payload_path):
+        os.makedirs(os.path.dirname(payload_path), exist_ok=True)
+        with jsonlines.open(payload_path, mode="a") as writer:
+            writer.write(payload)
+
+    def load_cached_payload(self, payloads_path):
+        print(f"Checking for cached payloads...")
+        
+        if os.path.exists(payloads_path):
+            print(f"Payloads already exists at '{payloads_path}'.")
+            api_request_list = []
+            with jsonlines.open(payloads_path, mode="r") as reader:
+                for line in reader:
+                    api_request_list.append(line)
+            return api_request_list
+        else:
+            print(f"No cached payloads found.")
+            return []
 
 
 class PayloadCreatorFactory:
@@ -125,6 +195,8 @@ class PayloadCreatorFactory:
         """
         if task_type == "QG":
             return QuestionGenerationPayloadCreator(temperature, system_prompt_path)
+        elif task_type == "SUM":
+            return SummarizationPayloadCreator(temperature, system_prompt_path)
         else:
             raise ValueError(f"Unsupported task type: {task_type}")
         
